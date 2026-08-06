@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TK TaskKraft Studio - Ultra-polished HTML/CSS/JS Productivity & Developer Workstation featuring Kanban Boards, Radial Focus Timer, Soundscapes, Live Analytics, and Utilities.">
+  <title>TaskKraft | Productivity & Developer Workstation</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Design System -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- External JS Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">TK</div>
+          <div class="brand-info">
+            <h1>TaskKraft</h1>
+            <span>Studio v2.5</span>
+          </div>
+        </div>
+
+        <nav class="nav-menu">
+          <a class="nav-item active" data-view="dashboard" id="nav-dashboard">
+            <div class="nav-item-left">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Dashboard</span>
+            </div>
+          </a>
+          
+          <a class="nav-item" data-view="kanban" id="nav-kanban">
+            <div class="nav-item-left">
+              <i class="fa-solid fa-list-check"></i>
+              <span>Kanban Board</span>
+            </div>
+            <span class="nav-badge" id="kanban-total-badge">0</span>
+          </a>
+
+          <a class="nav-item" data-view="timer" id="nav-timer">
+            <div class="nav-item-left">
+              <i class="fa-solid fa-stopwatch"></i>
+              <span>Focus Timer</span>
+            </div>
+            <span class="nav-badge" style="background: rgba(6,182,212,0.2); color: var(--accent-cyan);" id="timer-status-badge">Ready</span>
+          </a>
+
+          <a class="nav-item" data-view="notes" id="nav-notes">
+            <div class="nav-item-left">
+              <i class="fa-solid fa-note-sticky"></i>
+              <span>Markdown Notes</span>
+            </div>
+            <span class="nav-badge" style="background: rgba(139,92,246,0.2); color: var(--accent-purple);" id="notes-total-badge">0</span>
+          </a>
+
+          <a class="nav-item" data-view="tools" id="nav-tools">
+            <div class="nav-item-left">
+              <i class="fa-solid fa-wrench"></i>
+              <span>Dev Utilities</span>
+            </div>
+          </a>
+
+          <a class="nav-item" data-view="analytics" id="nav-analytics">
+            <div class="nav-item-left">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Analytics</span>
+            </div>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <div class="status-dot"></div>
+          <span>TK Engine Online (Local Persistence)</span>
+        </div>
+        <button class="btn btn-glass" style="width: 100%; justify-content: flex-start;" id="btn-quick-export">
+          <i class="fa-solid fa-download"></i> Backup Workspace
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="main-wrapper">
+      
+      <!-- TOP HEADER -->
+      <header class="top-header">
+        <div class="header-left">
+          <div class="page-title-group">
+            <h2 id="header-view-title">Dashboard Overview</h2>
+            <p id="header-view-subtitle">Track performance, manage active sprints, and optimize workflow</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="cmd-palette-btn" id="btn-open-cmd">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Quick Navigation</span>
+            <span class="kbd-shortcut">Ctrl+K</span>
+          </button>
+
+          <button class="btn btn-primary" id="btn-header-add-task">
+            <i class="fa-solid fa-plus"></i> New Task
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENT PANELS -->
+      <main class="content-area">
+        
+        <!-- VIEW 1: DASHBOARD -->
+        <section class="view-panel active" id="view-dashboard">
+          <div class="dashboard-grid">
+            <div class="glass-card stat-card">
+              <div class="stat-icon purple"><i class="fa-solid fa-bars-staggered"></i></div>
+              <div class="stat-content">
+                <h3 id="stat-total-tasks">0</h3>
+                <p>Total Tasks Active</p>
+              </div>
+            </div>
+
+            <div class="glass-card stat-card">
+              <div class="stat-icon cyan"><i class="fa-solid fa-circle-check"></i></div>
+              <div class="stat-content">
+                <h3 id="stat-completed-tasks">0</h3>
+                <p>Completed Tasks</p>
+              </div>
+            </div>
+
+            <div class="glass-card stat-card">
+              <div class="stat-icon emerald"><i class="fa-solid fa-clock"></i></div>
+              <div class="stat-content">
+                <h3 id="stat-focus-time">0m</h3>
+                <p>Focus Time Logged</p>
+              </div>
+            </div>
+
+            <div class="glass-card stat-card">
+              <div class="stat-icon amber"><i class="fa-solid fa-fire"></i></div>
+              <div class="stat-content">
+                <h3 id="stat-streak">7 Days</h3>
+                <p>Productivity Streak</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-sections">
+            <div class="glass-card">
+              <div class="section-header">
+                <h3><i class="fa-solid fa-bolt" style="color: var(--accent-amber); margin-right: 8px;"></i> Recent Task Activity</h3>
+                <button class="btn btn-glass btn-icon" id="btn-dash-refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
+              </div>
+              <div id="dashboard-recent-list" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <div class="section-header">
+                <h3><i class="fa-solid fa-chart-line" style="color: var(--accent-cyan); margin-right: 8px;"></i> Weekly Velocity</h3>
+              </div>
+              <div style="height: 220px; position: relative;">
+                <canvas id="miniVelocityChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 2: KANBAN BOARD -->
+        <section class="view-panel" id="view-kanban">
+          <div class="kanban-toolbar">
+            <div class="kanban-controls">
+              <div class="search-input-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="kanban-search" placeholder="Search tasks by title or tag...">
+              </div>
+
+              <select class="filter-select" id="kanban-priority-filter">
+                <option value="all">All Priorities</option>
+                <option value="urgent">Urgent</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary" id="btn-board-add-task">
+              <i class="fa-solid fa-plus"></i> Add Card
+            </button>
+          </div>
+
+          <div class="kanban-board">
+            <!-- Column 1: To Do -->
+            <div class="kanban-column" data-status="todo">
+              <div class="column-header">
+                <div class="column-title">
+                  <i class="fa-regular fa-circle" style="color: var(--text-muted);"></i>
+                  <span>To Do</span>
+                </div>
+                <span class="column-count" id="count-todo">0</span>
+              </div>
+              <div class="task-list" id="list-todo"></div>
+            </div>
+
+            <!-- Column 2: In Progress -->
+            <div class="kanban-column" data-status="in_progress">
+              <div class="column-header">
+                <div class="column-title">
+                  <i class="fa-solid fa-spinner" style="color: var(--accent-cyan);"></i>
+                  <span>In Progress</span>
+                </div>
+                <span class="column-count" id="count-in_progress">0</span>
+              </div>
+              <div class="task-list" id="list-in_progress"></div>
+            </div>
+
+            <!-- Column 3: Review -->
+            <div class="kanban-column" data-status="review">
+              <div class="column-header">
+                <div class="column-title">
+                  <i class="fa-solid fa-eye" style="color: var(--accent-amber);"></i>
+                  <span>Review</span>
+                </div>
+                <span class="column-count" id="count-review">0</span>
+              </div>
+              <div class="task-list" id="list-review"></div>
+            </div>
+
+            <!-- Column 4: Completed -->
+            <div class="kanban-column" data-status="completed">
+              <div class="column-header">
+                <div class="column-title">
+                  <i class="fa-solid fa-circle-check" style="color: var(--accent-emerald);"></i>
+                  <span>Completed</span>
+                </div>
+                <span class="column-count" id="count-completed">0</span>
+              </div>
+              <div class="task-list" id="list-completed"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 3: FOCUS TIMER -->
+        <section class="view-panel" id="view-timer">
+          <div class="timer-container">
+            
+            <div class="timer-modes">
+              <button class="timer-mode-btn active" data-time="1500" data-mode="focus">Pomodoro (25m)</button>
+              <button class="timer-mode-btn" data-time="300" data-mode="short">Short Break (5m)</button>
+              <button class="timer-mode-btn" data-time="900" data-mode="long">Long Break (15m)</button>
+            </div>
+
+            <div class="radial-timer-display">
+              <svg class="timer-svg" viewBox="0 0 300 300">
+                <circle class="timer-bg-circle" cx="150" cy="150" r="135"></circle>
+                <circle class="timer-progress-circle" id="timer-ring" cx="150" cy="150" r="135"></circle>
+              </svg>
+              <div class="timer-center-content">
+                <div class="time-clock" id="timer-display">25:00</div>
+                <div class="timer-status-text" id="timer-status-label">Deep Focus</div>
+              </div>
+            </div>
+
+            <div class="timer-controls">
+              <button class="btn btn-primary btn-timer-main" id="btn-timer-toggle">
+                <i class="fa-solid fa-play"></i> Start
+              </button>
+              <button class="btn btn-glass" style="width: 48px; height: 48px; border-radius: 50%;" id="btn-timer-reset">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+            </div>
+
+            <!-- Ambient Sound Generator (Web Audio API Synth) -->
+            <div class="glass-card soundscape-box">
+              <div class="section-header" style="margin-bottom: 8px;">
+                <h3><i class="fa-solid fa-sliders" style="color: var(--accent-purple); margin-right: 8px;"></i> Ambient Soundscapes (Web Audio Synth)</h3>
+              </div>
+              <div class="sound-grid">
+                <div class="sound-card" data-sound="rain">
+                  <i class="fa-solid fa-cloud-rain"></i>
+                  <span>Rainfall</span>
+                </div>
+                <div class="sound-card" data-sound="space">
+                  <i class="fa-solid fa-user-astronaut"></i>
+                  <span>Deep Space</span>
+                </div>
+                <div class="sound-card" data-sound="noise">
+                  <i class="fa-solid fa-wave-square"></i>
+                  <span>White Noise</span>
+                </div>
+                <div class="sound-card" data-sound="waves">
+                  <i class="fa-solid fa-water"></i>
+                  <span>Ocean Waves</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- VIEW 4: MARKDOWN NOTES -->
+        <section class="view-panel" id="view-notes">
+          <div class="notes-layout">
+            <div class="glass-card notes-sidebar">
+              <button class="btn btn-primary" id="btn-new-note" style="width: 100%;">
+                <i class="fa-solid fa-plus"></i> New Note
+              </button>
+              <div class="notes-list" id="notes-list-container">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <div class="glass-card notes-editor-container">
+              <div class="editor-toolbar">
+                <input type="text" id="note-title-input" class="form-control" style="font-weight: 700; font-size: 16px; background: transparent; border: none;" placeholder="Note Title...">
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-glass" id="btn-save-note"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                  <button class="btn btn-glass" id="btn-delete-note" style="color: var(--accent-rose);"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+
+              <div class="editor-split">
+                <textarea id="note-markdown-input" class="markdown-input" placeholder="Type Markdown content here..."></textarea>
+                <div id="note-markdown-preview" class="markdown-preview"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 5: DEV UTILITIES -->
+        <section class="view-panel" id="view-tools">
+          <div class="tools-grid">
+            
+            <!-- Tool 1: JSON Formatter -->
+            <div class="glass-card">
+              <div class="tool-card-header">
+                <h4><i class="fa-solid fa-code" style="color: var(--accent-cyan);"></i> JSON Formatter & Validator</h4>
+                <button class="btn btn-glass btn-icon" id="btn-copy-json"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <textarea id="json-input" class="tool-textarea" placeholder="Paste unformatted JSON here..."></textarea>
+              <div class="tool-actions-row">
+                <button class="btn btn-primary" id="btn-format-json">Format & Prettify</button>
+                <button class="btn btn-glass" id="btn-minify-json">Minify</button>
+              </div>
+            </div>
+
+            <!-- Tool 2: Base64 Encoder/Decoder -->
+            <div class="glass-card">
+              <div class="tool-card-header">
+                <h4><i class="fa-solid fa-shield-halved" style="color: var(--accent-purple);"></i> Base64 Encoder / Decoder</h4>
+                <button class="btn btn-glass btn-icon" id="btn-copy-b64"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <textarea id="b64-input" class="tool-textarea" placeholder="Type text or base64 string..."></textarea>
+              <div class="tool-actions-row">
+                <button class="btn btn-primary" id="btn-encode-b64">Encode to Base64</button>
+                <button class="btn btn-glass" id="btn-decode-b64">Decode from Base64</button>
+              </div>
+            </div>
+
+            <!-- Tool 3: Color Palette Generator -->
+            <div class="glass-card">
+              <div class="tool-card-header">
+                <h4><i class="fa-solid fa-palette" style="color: var(--accent-amber);"></i> Color Palette Generator</h4>
+                <button class="btn btn-primary" id="btn-gen-palette"><i class="fa-solid fa-dice"></i> Generate Palette</button>
+              </div>
+              <div class="palette-swatches" id="palette-swatches">
+                <!-- Swatches generated via JS -->
+              </div>
+              <p style="font-size: 12px; color: var(--text-muted);">Click any color swatch to copy its HEX code directly to your clipboard.</p>
+            </div>
+
+            <!-- Tool 4: Regex Tester -->
+            <div class="glass-card">
+              <div class="tool-card-header">
+                <h4><i class="fa-solid fa-terminal" style="color: var(--accent-emerald);"></i> Regex Tester & Explainer</h4>
+              </div>
+              <input type="text" id="regex-pattern" class="form-control" style="margin-bottom: 10px;" placeholder="Enter regex pattern (e.g. ^[a-z0-9]+@ domain\.com$)">
+              <textarea id="regex-input" class="tool-textarea" placeholder="Enter test string to evaluate regex match..."></textarea>
+              <div id="regex-result" style="padding: 10px; border-radius: var(--radius-md); background: rgba(0,0,0,0.3); font-size: 13px; min-height: 38px;">Match Status: Waiting...</div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- VIEW 6: LIVE ANALYTICS -->
+        <section class="view-panel" id="view-analytics">
+          <div class="dashboard-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 24px;">
+            
+            <div class="glass-card">
+              <div class="section-header">
+                <h3><i class="fa-solid fa-chart-line" style="color: var(--accent-cyan); margin-right: 8px;"></i> Task Completion Velocity</h3>
+              </div>
+              <div style="height: 280px; position: relative;">
+                <canvas id="velocityChart"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <div class="section-header">
+                <h3><i class="fa-solid fa-chart-pie" style="color: var(--accent-purple); margin-right: 8px;"></i> Priority Distribution</h3>
+              </div>
+              <div style="height: 280px; position: relative;">
+                <canvas id="priorityChart"></canvas>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- TASK MODAL (CREATE / EDIT) -->
+  <div class="modal-overlay" id="task-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-task-title">Add New Task</h3>
+        <button class="close-modal-btn" id="btn-close-task-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <form id="task-form">
+        <input type="hidden" id="task-id">
+        
+        <div class="form-group">
+          <label for="task-input-title">Task Title</label>
+          <input type="text" id="task-input-title" class="form-control" placeholder="e.g. Implement OAuth Auth Middleware" required>
+        </div>
+
+        <div class="form-group">
+          <label for="task-input-desc">Description</label>
+          <textarea id="task-input-desc" class="form-control" style="height: 80px; resize: none;" placeholder="Details, specifications, links..."></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label for="task-input-status">Board Status</label>
+            <select id="task-input-status" class="form-control">
+              <option value="todo">To Do</option>
+              <option value="in_progress">In Progress</option>
+              <option value="review">Review</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="task-input-priority">Priority Flag</label>
+            <select id="task-input-priority" class="form-control">
+              <option value="urgent">Urgent</option>
+              <option value="high" selected>High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="task-input-due">Due Date</label>
+          <input type="date" id="task-input-due" class="form-control">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-glass" id="btn-cancel-task">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE MODAL -->
+  <div class="modal-overlay" id="cmd-modal">
+    <div class="modal-box" style="max-width: 600px; padding: 20px;">
+      <div class="search-input-box" style="width: 100%; margin-bottom: 16px;">
+        <i class="fa-solid fa-terminal"></i>
+        <input type="text" id="cmd-search-input" placeholder="Type a command or jump to view (e.g. 'kanban', 'timer')..." style="padding-left: 42px;">
+      </div>
+      <div id="cmd-results-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto;">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application Modules JS -->
+  <script src="js/app.js"></script>
+  <script src="js/kanban.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/notes.js"></script>
+  <script src="js/tools.js"></script>
+  <script src="js/analytics.js"></script>
+
+</body>
+</html>
