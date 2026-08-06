@@ -1,6 +1,6 @@
-# Walkthrough - TK TaskKraft Studio
+# TaskKraft
 
-**TK TaskKraft Studio** is a fully functional web application strictly built using HTML5, CSS3, and JavaScript libraries. It is running locally at `http://localhost:3000`.
+**TaskKraft** is a fully functional web application strictly built using HTML5, CSS3, and JavaScript libraries. It is running locally at `http://localhost:3000`.
 
 ---
 
